@@ -36,9 +36,20 @@ let model = {
 };
 
 let controller = {
+   player: 0,
+
    rollDice: function() {
-      model.sumPlayerScore(0);
-      view.displayResult(0);
-      view.displayScore(0);
+      model.sumPlayerScore(controller.player);
+      view.displayResult(controller.player);
+      view.displayScore(controller.player);
+      controller.changePlayer();
+   },
+
+   changePlayer: function() {
+      if (controller.player < (model.players.length - 1)) {
+         controller.player++;
+      } else {
+         controller.player = 0;
+      }
    }
 };
