@@ -1,5 +1,19 @@
 "use strict"
 
+function countPlayerTurn() {
+   let playerNum = 1;
+   function counter() {
+      if (playerNum < model.players.length) {
+         playerNum++;
+      } else {
+         playerNum = 1;
+      }
+      return playerNum;
+   }
+   return counter;
+}
+let playerTurn = countPlayerTurn();
+
 window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
 }
@@ -13,8 +27,12 @@ let view = {
    displayScore: function(player) {
       const scoreboardList = document.getElementsByClassName('scoreboard');
       scoreboardList[player].innerHTML = model.players[player].score;
-   }
+      this.displayMessage(playerTurn());
+   },
 
+   displayMessage: function(playerNum) {
+      document.querySelector('#message').innerHTML = `Player ${playerNum} Turn`;
+   }
 };
 
 let model = {
@@ -32,7 +50,7 @@ let model = {
       let dice = this.getRandomNum();
       this.players[player].dice = dice;
       this.players[player].score += dice;
-   }
+   },
 };
 
 let controller = {
@@ -46,10 +64,10 @@ let controller = {
    },
 
    changePlayer: function() {
-      if (controller.player < (model.players.length - 1)) {
-         controller.player++;
+      if (this.player < (model.players.length - 1)) {
+         this.player++;
       } else {
-         controller.player = 0;
+         this.player = 0;
       }
    }
 };
