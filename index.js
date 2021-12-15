@@ -22,6 +22,11 @@ let view = {
    displayResult: function(player) {
       const dice = document.getElementsByClassName('dice');
       dice[player].innerHTML = model.players[player].dice;
+      for (let i = 0; i < model.players.length; i++) {
+         if (i === player) {
+            dice[i + 1].setAttribute('class', 'active');
+         }
+      }
    },
 
    displayScore: function(player) {
