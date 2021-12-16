@@ -19,13 +19,22 @@ window.onload = function() {
 }
 
 let view = {
+
    displayResult: function(player) {
-      const dice = document.getElementsByClassName('dice');
-      dice[player].innerHTML = model.players[player].dice;
+      const diceList = document.getElementsByClassName('dice');
+      diceList[player].innerHTML = model.players[player].dice;
+      this.displayShade(diceList, player)
+   },
+
+   displayShade: function(list, player) {
+      let nextPlayer = player + 1;
       for (let i = 0; i < model.players.length; i++) {
-         if (i === player) {
-            dice[i + 1].setAttribute('class', 'active');
-         }
+         list[i].removeAttribute('role');
+      }
+      if (nextPlayer < model.players.length) {
+         list[nextPlayer].setAttribute('role', 'active');
+      } else {
+         list[0].setAttribute('role', 'active');
       }
    },
 
@@ -55,7 +64,7 @@ let model = {
       let dice = this.getRandomNum();
       this.players[player].dice = dice;
       this.players[player].score += dice;
-   },
+   }
 };
 
 let controller = {
