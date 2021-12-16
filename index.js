@@ -1,19 +1,5 @@
 "use strict"
 
-function countPlayerTurn() {
-   let playerNum = 1;
-   function counter() {
-      if (playerNum < model.players.length) {
-         playerNum++;
-      } else {
-         playerNum = 1;
-      }
-      return playerNum;
-   }
-   return counter;
-}
-let playerTurn = countPlayerTurn();
-
 window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
 }
@@ -41,19 +27,22 @@ let view = {
    displayScore: function(player) {
       const scoreboardList = document.getElementsByClassName('scoreboard');
       scoreboardList[player].innerHTML = model.players[player].score;
-      this.displayMessage(playerTurn());
+      this.displayMessage(playerTurn(), roundNum());
    },
 
-   displayMessage: function(playerNum) {
+   displayMessage: function(playerNum, roundNum) {
       document.querySelector('#message').innerHTML = `Player ${playerNum} Turn`;
+      if (roundNum) {
+         document.querySelector('#roundEl').innerHTML = `Round # ${roundNum}`;
+      }
    }
 };
 
 let model = {
 
    players: [
-      {score: 0, turn: true, dice: 0},
-      {score: 0, turn: false, dice: 0}
+      {score: 0, dice: 0},
+      {score: 0, dice: 0}
    ],
 
    getRandomNum: function() {
@@ -64,8 +53,37 @@ let model = {
       let dice = this.getRandomNum();
       this.players[player].dice = dice;
       this.players[player].score += dice;
+   },
+
+   countPlayerTurn: function() {
+      let playerNum = 1;
+      function counter() {
+         if (playerNum < model.players.length) {
+            playerNum++;
+         } else {
+            playerNum = 1;
+         }
+         return playerNum;
+      }
+      return counter;
+   },
+
+   trackRounds: function() {
+      let clicks = 0;
+      let roundNum = 1;
+      function counter() {
+         clicks++;
+         if (clicks === model.players.length) {
+            roundNum++;
+            clicks = 0;
+            return roundNum;
+         }
+      }
+      return counter;
    }
 };
+let playerTurn = model.countPlayerTurn();
+let roundNum = model.trackRounds();
 
 let controller = {
    player: 0,
@@ -85,3 +103,4 @@ let controller = {
       }
    }
 };
+
