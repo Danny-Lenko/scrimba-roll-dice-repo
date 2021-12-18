@@ -27,7 +27,7 @@ let view = {
    displayScore: function(player) {
       const scoreboardList = document.getElementsByClassName('scoreboard');
       scoreboardList[player].innerHTML = model.players[player].score;
-      this.displayMessage(playerTurn(), roundNum());
+      this.displayMessage(playerTurn(), model.roundNum);
    },
 
    displayMessage: function(playerNum, roundNum) {
@@ -39,11 +39,27 @@ let view = {
 };
 
 let model = {
-
    players: [
       {score: 0, dice: 0},
       {score: 0, dice: 0}
    ],
+   clicks: 0,
+   turns: 0,
+   roundNum: 1,
+
+   manageClicks: function() {
+      let hitScore = this.checkScore();
+      this.clicks++;
+      this.turns++;
+      if (this.clicks === (this.players.length - 1) && hitScore) {
+         alert('winner');
+      }
+      if (this.turns === (this.players.length - 1)) {
+         this.roundNum++;
+         this.turns = -1;
+         this.clicks = 0;
+      }
+   },
 
    getRandomNum: function() {
       return Math.floor(Math.random() * 6 + 1);
@@ -68,22 +84,39 @@ let model = {
       return counter;
    },
 
-   trackRounds: function() {
-      let clicks = 0;
-      let roundNum = 1;
-      function counter() {
-         clicks++;
-         if (clicks === model.players.length) {
-            roundNum++;
-            clicks = 0;
-            return roundNum;
+   // trackRounds: function() {
+   //    let clicks = 0;
+   //    let roundNum = 1;
+   //    function counter() {
+   //       clicks++;
+   //       if (model.clicks === model.players.length) {
+   //          roundNum++;
+   //          clicks = 0;
+   //          return roundNum;
+   //       }
+   //    }
+   //    return counter;
+   // },
+
+   checkScore: function() {
+      for (let i = 0; i < this.players.length; i++) {
+         let player = this.players[i];
+         if (player.score >= 20) {
+            return true;
          }
       }
-      return counter;
-   }
+      return false;
+   },
+
+   // checkWinner: function() {
+   //    let hitScore = this.checkScore();
+   //    if (hitScore && this.roundEnds) {
+   //       console.log('smbd is winner');
+   //    }
+   // }
 };
 let playerTurn = model.countPlayerTurn();
-let roundNum = model.trackRounds();
+// let roundNum = model.trackRounds();
 
 let controller = {
    player: 0,
@@ -93,6 +126,8 @@ let controller = {
       view.displayResult(controller.player);
       view.displayScore(controller.player);
       controller.changePlayer();
+      // model.checkWinner();
+      model.manageClicks();
    },
 
    changePlayer: function() {
@@ -103,4 +138,3 @@ let controller = {
       }
    }
 };
-
