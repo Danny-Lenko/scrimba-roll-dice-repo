@@ -45,6 +45,12 @@ let model = {
       {score: 0, dice: 0}
    ],
 
+   clicks: 0,
+
+   manageClicks: function() {
+      this.clicks++;
+   },
+
    getRandomNum: function() {
       return Math.floor(Math.random() * 6 + 1);
    },
@@ -80,6 +86,25 @@ let model = {
          }
       }
       return counter;
+   },
+
+   checkScore: function() {
+      for (let i = 0; i < this.players.length; i++) {
+         let player = this.players[i];
+         if (player.score >= 20) {
+            return true;
+         }
+      }
+      return false;
+   },
+
+   checkWinner: function() {
+      let hitScore = this.checkScore();
+      let clicks = 0;
+
+      if (hitScore) {
+         console.log();
+      }
    }
 };
 let playerTurn = model.countPlayerTurn();
@@ -93,6 +118,7 @@ let controller = {
       view.displayResult(controller.player);
       view.displayScore(controller.player);
       controller.changePlayer();
+      model.checkWinner();
    },
 
    changePlayer: function() {
@@ -103,4 +129,3 @@ let controller = {
       }
    }
 };
-
