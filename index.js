@@ -44,13 +44,20 @@ let model = {
       {score: 0, dice: 0}
    ],
    clicks: 0,
+   turns: 0,
    roundNum: 1,
 
    manageClicks: function() {
+      let hitScore = this.checkScore();
       this.clicks++;
-      if (this.clicks === (this.players.length - 1)) {
+      this.turns++;
+      if (this.clicks === (this.players.length - 1) && hitScore) {
+         alert('winner');
+      }
+      if (this.turns === (this.players.length - 1)) {
          this.roundNum++;
-         this.clicks = -1;
+         this.turns = -1;
+         this.clicks = 0;
       }
    },
 
@@ -101,14 +108,12 @@ let model = {
       return false;
    },
 
-   checkWinner: function() {
-      let hitScore = this.checkScore();
-      let clicks = 0;
-
-      if (hitScore) {
-         console.log();
-      }
-   }
+   // checkWinner: function() {
+   //    let hitScore = this.checkScore();
+   //    if (hitScore && this.roundEnds) {
+   //       console.log('smbd is winner');
+   //    }
+   // }
 };
 let playerTurn = model.countPlayerTurn();
 // let roundNum = model.trackRounds();
