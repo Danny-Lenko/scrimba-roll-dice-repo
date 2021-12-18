@@ -27,7 +27,7 @@ let view = {
    displayScore: function(player) {
       const scoreboardList = document.getElementsByClassName('scoreboard');
       scoreboardList[player].innerHTML = model.players[player].score;
-      this.displayMessage(playerTurn(), roundNum());
+      this.displayMessage(playerTurn(), model.roundNum);
    },
 
    displayMessage: function(playerNum, roundNum) {
@@ -39,16 +39,19 @@ let view = {
 };
 
 let model = {
-
    players: [
       {score: 0, dice: 0},
       {score: 0, dice: 0}
    ],
-
    clicks: 0,
+   roundNum: 1,
 
    manageClicks: function() {
       this.clicks++;
+      if (this.clicks === (this.players.length - 1)) {
+         this.roundNum++;
+         this.clicks = -1;
+      }
    },
 
    getRandomNum: function() {
@@ -74,19 +77,19 @@ let model = {
       return counter;
    },
 
-   trackRounds: function() {
-      let clicks = 0;
-      let roundNum = 1;
-      function counter() {
-         clicks++;
-         if (clicks === model.players.length) {
-            roundNum++;
-            clicks = 0;
-            return roundNum;
-         }
-      }
-      return counter;
-   },
+   // trackRounds: function() {
+   //    let clicks = 0;
+   //    let roundNum = 1;
+   //    function counter() {
+   //       clicks++;
+   //       if (model.clicks === model.players.length) {
+   //          roundNum++;
+   //          clicks = 0;
+   //          return roundNum;
+   //       }
+   //    }
+   //    return counter;
+   // },
 
    checkScore: function() {
       for (let i = 0; i < this.players.length; i++) {
@@ -108,7 +111,7 @@ let model = {
    }
 };
 let playerTurn = model.countPlayerTurn();
-let roundNum = model.trackRounds();
+// let roundNum = model.trackRounds();
 
 let controller = {
    player: 0,
@@ -118,7 +121,8 @@ let controller = {
       view.displayResult(controller.player);
       view.displayScore(controller.player);
       controller.changePlayer();
-      model.checkWinner();
+      // model.checkWinner();
+      model.manageClicks();
    },
 
    changePlayer: function() {
