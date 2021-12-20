@@ -52,7 +52,7 @@ let model = {
       this.clicks++;
       this.turns++;
       if (this.clicks === (this.players.length - 1) && hitScore) {
-         alert('winner');
+         checkWinner(collectScores());
       }
       if (this.turns === (this.players.length - 1)) {
          this.roundNum++;
@@ -138,3 +138,23 @@ let controller = {
       }
    }
 };
+
+function collectScores() {
+   let playerScores = [];
+   for (let i = 0; i < model.players.length; i++) {
+      playerScores.push(model.players[i].score);
+   }
+   return playerScores;
+}
+function checkWinner(scores) {
+   let bestScore = 0;
+   for (let i = 0; i < scores.length; i++) {
+      if (scores[i] > bestScore) {
+         bestScore = scores[i];
+      }
+   }
+   console.log(bestScore);
+}
+function defineWinnerName() {
+   
+}
