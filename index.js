@@ -3,6 +3,11 @@
 window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
    document.querySelector('#resetBtn').addEventListener('click', controller.resetGame);
+
+   document.querySelector('#twoPlayersBtn').addEventListener('click', model.start2Players);
+   document.querySelector('#threePlayersBtn').addEventListener('click', model.start3Players);
+   document.querySelector('#fourPlayersBtn').addEventListener('click', model.start4Players);
+   document.querySelector('#fivePlayersBtn').addEventListener('click', model.start5Players);
 }
 
 let view = {
@@ -48,9 +53,6 @@ let view = {
 let model = {
    players: [
       {score: 0, dice: 0},
-      {score: 0, dice: 0},
-      {score: 0, dice: 0},
-      {score: 0, dice: 0},
       {score: 0, dice: 0}
    ],
 
@@ -93,6 +95,12 @@ let model = {
       let playerScores = collectScores();
       defineWinnerName(playerScores, checkWinner(playerScores));
       controller.changeButton(rollBtn, resetBtn);
+   },
+
+   // set up number of players
+
+   start2Players: function() {
+      document.querySelector('.overlay').style.display="none";
    }
 };
 let playerTurn = model.countPlayerTurn();
@@ -121,7 +129,6 @@ let controller = {
          document.querySelector('#roundEl').innerHTML = `Round # ${this.roundNum}`;
          this.clicks = 0;
       }
-      
    },
 
    rollDice: function() {

@@ -82,3 +82,31 @@ button:focus {
 [role="active"] {
     box-shadow: -2px 6px 18px 3px rgba(0,0,0,0.75);
 }
+
+.overlay {
+    height: 120%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(23, 32, 42, 0.7);
+    display: flex;
+    justify-content: center;
+}
+
+.overlay__content {
+    margin-top: 70px;
+    width: 70%;
+    height: 60%;
+    background: var(--color-3);
+    text-align: center;
+}
+
+.overlay__h2 {
+    margin-top: 100px;
+}
+
+.overlay__btn {
+    margin: 50px 25px;
+    background: var(--color-5);
+}
