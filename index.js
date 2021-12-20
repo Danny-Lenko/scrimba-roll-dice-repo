@@ -35,8 +35,16 @@ let view = {
       if (roundNum) {
          document.querySelector('#roundEl').innerHTML = `Round # ${roundNum}`;
       }
+   },
+
+   displayVictoryMessage: function(winner) {
+      document.querySelector('#message').innerHTML = `Congrats! Player ${winner + 1} won!`;
    }
 };
+
+//
+//    end of view object
+//
 
 let model = {
    players: [
@@ -49,10 +57,11 @@ let model = {
 
    manageClicks: function() {
       let hitScore = this.checkScore();
+      let playerScores = collectScores();
       this.clicks++;
       this.turns++;
       if (this.clicks === (this.players.length - 1) && hitScore) {
-         checkWinner(collectScores());
+         defineWinnerName(playerScores, checkWinner(playerScores));
       }
       if (this.turns === (this.players.length - 1)) {
          this.roundNum++;
@@ -84,20 +93,6 @@ let model = {
       return counter;
    },
 
-   // trackRounds: function() {
-   //    let clicks = 0;
-   //    let roundNum = 1;
-   //    function counter() {
-   //       clicks++;
-   //       if (model.clicks === model.players.length) {
-   //          roundNum++;
-   //          clicks = 0;
-   //          return roundNum;
-   //       }
-   //    }
-   //    return counter;
-   // },
-
    checkScore: function() {
       for (let i = 0; i < this.players.length; i++) {
          let player = this.players[i];
@@ -107,16 +102,12 @@ let model = {
       }
       return false;
    },
-
-   // checkWinner: function() {
-   //    let hitScore = this.checkScore();
-   //    if (hitScore && this.roundEnds) {
-   //       console.log('smbd is winner');
-   //    }
-   // }
 };
 let playerTurn = model.countPlayerTurn();
-// let roundNum = model.trackRounds();
+
+// 
+//    end of model object
+// 
 
 let controller = {
    player: 0,
@@ -126,7 +117,6 @@ let controller = {
       view.displayResult(controller.player);
       view.displayScore(controller.player);
       controller.changePlayer();
-      // model.checkWinner();
       model.manageClicks();
    },
 
@@ -153,8 +143,14 @@ function checkWinner(scores) {
          bestScore = scores[i];
       }
    }
-   console.log(bestScore);
+   return bestScore;
 }
-function defineWinnerName() {
-   
+function defineWinnerName(scores, best) {
+   let winnerNumber = 0
+   for (let i = 0; i < scores.length; i++) {
+      if (best === scores[i]) {
+         winnerNumber = i;
+      }
+   }
+   view.displayVictoryMessage(winnerNumber);
 }
