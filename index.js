@@ -3,6 +3,11 @@
 window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
    document.querySelector('#resetBtn').addEventListener('click', controller.resetGame);
+
+   document.querySelector('#twoPlayersBtn').addEventListener('click', model.start2Players);
+   document.querySelector('#threePlayersBtn').addEventListener('click', model.start3Players);
+   document.querySelector('#fourPlayersBtn').addEventListener('click', model.start4Players);
+   document.querySelector('#fivePlayersBtn').addEventListener('click', model.start5Players);
 }
 
 let view = {
@@ -28,14 +33,12 @@ let view = {
    displayScore: function(player) {
       const scoreboardList = document.getElementsByClassName('scoreboard');
       scoreboardList[player].innerHTML = model.players[player].score;
-      this.displayMessage(playerTurn(), model.roundNum);
+      this.displayMessage(playerTurn(), controller.roundNum);
    },
 
    displayMessage: function(playerNum, roundNum) {
       document.querySelector('#message').innerHTML = `Player ${playerNum} Turn`;
-      if (roundNum) {
-         document.querySelector('#roundEl').innerHTML = `Round # ${roundNum}`;
-      }
+      document.querySelector('#roundEl').innerHTML = `Round # ${roundNum}`;
    },
 
    displayVictoryMessage: function(winner) {
@@ -50,25 +53,8 @@ let view = {
 let model = {
    players: [
       {score: 0, dice: 0},
-      {score: 0, dice: 0}
+      {score: 0, dice: 0},
    ],
-   clicks: 0,
-   turns: 0,
-   roundNum: 1,
-
-   manageClicks: function() {
-      let hitScore = this.checkScore();
-      this.clicks++;
-      this.turns++;
-      if (this.clicks === (this.players.length - 1) && hitScore) {
-         this.manageVictory();
-      }
-      if (this.turns === (this.players.length - 1)) {
-         this.roundNum++;
-         this.turns = -1;
-         this.clicks = 0;
-      }
-   },
 
    getRandomNum: function() {
       return Math.floor(Math.random() * 6 + 1);
@@ -109,6 +95,39 @@ let model = {
       let playerScores = collectScores();
       defineWinnerName(playerScores, checkWinner(playerScores));
       controller.changeButton(rollBtn, resetBtn);
+      controller.roundNum--;
+   },
+
+   // set up the number of players
+
+   start2Players: function() {
+      document.querySelector('.overlay').style.display="none";
+   },
+   start3Players: function() {
+      document.querySelector('.overlay').style.display="none";
+      document.querySelector('#player3').style.display="block";
+      model.players.push({score: 0, dice: 0});
+   },
+   start4Players: function() {
+      document.querySelector('.overlay').style.display="none";
+      for (let i = 3; i < 5; i++) {
+         document.querySelector(`#player${i}`).style.display="block";
+      }
+      model.players.push(
+         {score: 0, dice: 0}, 
+         {score: 0, dice: 0}
+      );
+   },
+   start5Players: function() {
+      document.querySelector('.overlay').style.display="none";
+      for (let i = 3; i < 6; i++) {
+         document.querySelector(`#player${i}`).style.display="block";
+      }
+      model.players.push(
+         {score: 0, dice: 0}, 
+         {score: 0, dice: 0},
+         {score: 0, dice: 0}
+      );
    }
 };
 let playerTurn = model.countPlayerTurn();
@@ -119,13 +138,32 @@ let playerTurn = model.countPlayerTurn();
 
 let controller = {
    player: 0,
+   clicks: 0,
+   roundNum: 1,
+
+   countClicks: function() {
+      this.clicks++;
+      this.manageClicks();
+   },
+
+   manageClicks: function() {
+      let hitScore = model.checkScore();
+      if (this.clicks === model.players.length && hitScore) {
+         model.manageVictory();
+      }
+      if (this.clicks === model.players.length) {
+         this.roundNum++;
+         document.querySelector('#roundEl').innerHTML = `Round # ${this.roundNum}`;
+         this.clicks = 0;
+      }
+   },
 
    rollDice: function() {
       model.sumPlayerScore(controller.player);
       view.displayResult(controller.player);
       view.displayScore(controller.player);
       controller.changePlayer();
-      model.manageClicks();
+      controller.countClicks();
    },
 
    changePlayer: function() {
@@ -155,13 +193,14 @@ let controller = {
       document.querySelector('#message').innerHTML = `Player 1 Turn`;
       document.querySelector('#roundEl').innerHTML = `Round # 1`;
 
-      model.clicks = 0;
-      model.turns = 0;
-      model.roundNum = 1;
+      controller.clicks = 0;
+      controller.roundNum = 1;
       controller.player = 0;
       controller.changeButton(resetBtn, rollBtn);
    }
 };
+
+// auxiliary functions
 
 function collectScores() {
    let playerScores = [];
