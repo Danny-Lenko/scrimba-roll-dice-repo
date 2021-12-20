@@ -53,7 +53,7 @@ let view = {
 let model = {
    players: [
       {score: 0, dice: 0},
-      {score: 0, dice: 0}
+      {score: 0, dice: 0},
    ],
 
    getRandomNum: function() {
@@ -95,12 +95,39 @@ let model = {
       let playerScores = collectScores();
       defineWinnerName(playerScores, checkWinner(playerScores));
       controller.changeButton(rollBtn, resetBtn);
+      controller.roundNum--;
    },
 
-   // set up number of players
+   // set up the number of players
 
    start2Players: function() {
       document.querySelector('.overlay').style.display="none";
+   },
+   start3Players: function() {
+      document.querySelector('.overlay').style.display="none";
+      document.querySelector('#player3').style.display="block";
+      model.players.push({score: 0, dice: 0});
+   },
+   start4Players: function() {
+      document.querySelector('.overlay').style.display="none";
+      for (let i = 3; i < 5; i++) {
+         document.querySelector(`#player${i}`).style.display="block";
+      }
+      model.players.push(
+         {score: 0, dice: 0}, 
+         {score: 0, dice: 0}
+      );
+   },
+   start5Players: function() {
+      document.querySelector('.overlay').style.display="none";
+      for (let i = 3; i < 6; i++) {
+         document.querySelector(`#player${i}`).style.display="block";
+      }
+      model.players.push(
+         {score: 0, dice: 0}, 
+         {score: 0, dice: 0},
+         {score: 0, dice: 0}
+      );
    }
 };
 let playerTurn = model.countPlayerTurn();
