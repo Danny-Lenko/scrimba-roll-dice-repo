@@ -200,6 +200,8 @@ let controller = {
    }
 };
 
+// auxiliary functions
+
 function collectScores() {
    let playerScores = [];
    for (let i = 0; i < model.players.length; i++) {
