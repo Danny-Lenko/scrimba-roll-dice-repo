@@ -28,14 +28,12 @@ let view = {
    displayScore: function(player) {
       const scoreboardList = document.getElementsByClassName('scoreboard');
       scoreboardList[player].innerHTML = model.players[player].score;
-      this.displayMessage(playerTurn(), model.roundNum);
+      this.displayMessage(playerTurn(), controller.roundNum);
    },
 
    displayMessage: function(playerNum, roundNum) {
       document.querySelector('#message').innerHTML = `Player ${playerNum} Turn`;
-      if (roundNum) {
-         document.querySelector('#roundEl').innerHTML = `Round # ${roundNum}`;
-      }
+      document.querySelector('#roundEl').innerHTML = `Round # ${roundNum}`;
    },
 
    displayVictoryMessage: function(winner) {
@@ -55,23 +53,6 @@ let model = {
       {score: 0, dice: 0},
       {score: 0, dice: 0}
    ],
-   // clicks: 0,
-   // turns: 0,
-   // roundNum: 1,
-
-   // manageClicks: function() {
-   //    let hitScore = this.checkScore();
-   //    this.clicks++;
-   //    this.turns++;
-   //    if (this.clicks === (this.players.length - 1) && hitScore) {
-   //       this.manageVictory();
-   //    }
-   //    if (this.turns === (this.players.length - 1)) {
-   //       this.roundNum++;
-   //       this.turns = -1;
-   //       this.clicks = 0;
-   //    }
-   // },
 
    getRandomNum: function() {
       return Math.floor(Math.random() * 6 + 1);
@@ -128,7 +109,6 @@ let controller = {
    countClicks: function() {
       this.clicks++;
       this.manageClicks();
-      console.log(this.clicks);
    },
 
    manageClicks: function() {
@@ -138,8 +118,10 @@ let controller = {
       }
       if (this.clicks === model.players.length) {
          this.roundNum++;
+         document.querySelector('#roundEl').innerHTML = `Round # ${this.roundNum}`;
          this.clicks = 0;
       }
+      
    },
 
    rollDice: function() {
@@ -148,7 +130,6 @@ let controller = {
       view.displayScore(controller.player);
       controller.changePlayer();
       controller.countClicks();
-      // model.manageClicks();
    },
 
    changePlayer: function() {
@@ -178,9 +159,8 @@ let controller = {
       document.querySelector('#message').innerHTML = `Player 1 Turn`;
       document.querySelector('#roundEl').innerHTML = `Round # 1`;
 
-      model.clicks = 0;
-      model.turns = 0;
-      model.roundNum = 1;
+      controller.clicks = 0;
+      controller.roundNum = 1;
       controller.player = 0;
       controller.changeButton(resetBtn, rollBtn);
    }
