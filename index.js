@@ -2,6 +2,7 @@
 
 window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
+   document.querySelector('#resetBtn').addEventListener('click', controller.resetGame);
 }
 
 let view = {
@@ -35,8 +36,16 @@ let view = {
       if (roundNum) {
          document.querySelector('#roundEl').innerHTML = `Round # ${roundNum}`;
       }
+   },
+
+   displayVictoryMessage: function(winner) {
+      document.querySelector('#message').innerHTML = `Congrats! Player ${winner + 1} won!`;
    }
 };
+
+//
+//    end of view object
+//
 
 let model = {
    players: [
@@ -52,7 +61,7 @@ let model = {
       this.clicks++;
       this.turns++;
       if (this.clicks === (this.players.length - 1) && hitScore) {
-         alert('winner');
+         this.manageVictory();
       }
       if (this.turns === (this.players.length - 1)) {
          this.roundNum++;
@@ -84,20 +93,6 @@ let model = {
       return counter;
    },
 
-   // trackRounds: function() {
-   //    let clicks = 0;
-   //    let roundNum = 1;
-   //    function counter() {
-   //       clicks++;
-   //       if (model.clicks === model.players.length) {
-   //          roundNum++;
-   //          clicks = 0;
-   //          return roundNum;
-   //       }
-   //    }
-   //    return counter;
-   // },
-
    checkScore: function() {
       for (let i = 0; i < this.players.length; i++) {
          let player = this.players[i];
@@ -108,15 +103,19 @@ let model = {
       return false;
    },
 
-   // checkWinner: function() {
-   //    let hitScore = this.checkScore();
-   //    if (hitScore && this.roundEnds) {
-   //       console.log('smbd is winner');
-   //    }
-   // }
+   manageVictory: function() {
+      const rollBtn = document.querySelector('#rollBtn');
+      const resetBtn = document.querySelector('#resetBtn');
+      let playerScores = collectScores();
+      defineWinnerName(playerScores, checkWinner(playerScores));
+      controller.changeButton(rollBtn, resetBtn);
+   }
 };
 let playerTurn = model.countPlayerTurn();
-// let roundNum = model.trackRounds();
+
+// 
+//    end of model object
+// 
 
 let controller = {
    player: 0,
@@ -126,7 +125,6 @@ let controller = {
       view.displayResult(controller.player);
       view.displayScore(controller.player);
       controller.changePlayer();
-      // model.checkWinner();
       model.manageClicks();
    },
 
@@ -136,5 +134,57 @@ let controller = {
       } else {
          this.player = 0;
       }
+   },
+
+   changeButton: function(hideBtn, showBtn) {
+      hideBtn.style.display = "none";
+      showBtn.style.display = "block";
+   },
+
+   resetGame: function() {
+      const scoreboardList = document.getElementsByClassName('scoreboard');
+      const diceList = document.getElementsByClassName('dice');
+      const rollBtn = document.querySelector('#rollBtn');
+      const resetBtn = document.querySelector('#resetBtn');
+
+      for (let i = 0; i < model.players.length; i++) {
+         model.players[i].score = 0;
+         scoreboardList[i].innerHTML = 0;
+         diceList[i].innerHTML = `-`;
+      }
+      document.querySelector('#message').innerHTML = `Player 1 Turn`;
+      document.querySelector('#roundEl').innerHTML = `Round # 1`;
+
+      model.clicks = 0;
+      model.turns = 0;
+      model.roundNum = 1;
+      controller.player = 0;
+      controller.changeButton(resetBtn, rollBtn);
    }
 };
+
+function collectScores() {
+   let playerScores = [];
+   for (let i = 0; i < model.players.length; i++) {
+      playerScores.push(model.players[i].score);
+   }
+   return playerScores;
+}
+function checkWinner(scores) {
+   let bestScore = 0;
+   for (let i = 0; i < scores.length; i++) {
+      if (scores[i] > bestScore) {
+         bestScore = scores[i];
+      }
+   }
+   return bestScore;
+}
+function defineWinnerName(scores, best) {
+   let winnerNumber = 0
+   for (let i = 0; i < scores.length; i++) {
+      if (best === scores[i]) {
+         winnerNumber = i;
+      }
+   }
+   view.displayVictoryMessage(winnerNumber);
+}
