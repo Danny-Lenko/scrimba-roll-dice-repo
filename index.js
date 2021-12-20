@@ -2,6 +2,7 @@
 
 window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
+   document.querySelector('#resetBtn').addEventListener('click', controller.resetGame);
 }
 
 let view = {
@@ -57,11 +58,10 @@ let model = {
 
    manageClicks: function() {
       let hitScore = this.checkScore();
-      let playerScores = collectScores();
       this.clicks++;
       this.turns++;
       if (this.clicks === (this.players.length - 1) && hitScore) {
-         defineWinnerName(playerScores, checkWinner(playerScores));
+         this.manageVictory();
       }
       if (this.turns === (this.players.length - 1)) {
          this.roundNum++;
@@ -102,6 +102,14 @@ let model = {
       }
       return false;
    },
+
+   manageVictory: function() {
+      const rollBtn = document.querySelector('#rollBtn');
+      const resetBtn = document.querySelector('#resetBtn');
+      let playerScores = collectScores();
+      defineWinnerName(playerScores, checkWinner(playerScores));
+      controller.changeButton(rollBtn, resetBtn);
+   }
 };
 let playerTurn = model.countPlayerTurn();
 
@@ -126,6 +134,32 @@ let controller = {
       } else {
          this.player = 0;
       }
+   },
+
+   changeButton: function(hideBtn, showBtn) {
+      hideBtn.style.display = "none";
+      showBtn.style.display = "block";
+   },
+
+   resetGame: function() {
+      const scoreboardList = document.getElementsByClassName('scoreboard');
+      const diceList = document.getElementsByClassName('dice');
+      const rollBtn = document.querySelector('#rollBtn');
+      const resetBtn = document.querySelector('#resetBtn');
+
+      for (let i = 0; i < model.players.length; i++) {
+         model.players[i].score = 0;
+         scoreboardList[i].innerHTML = 0;
+         diceList[i].innerHTML = `-`;
+      }
+      document.querySelector('#message').innerHTML = `Player 1 Turn`;
+      document.querySelector('#roundEl').innerHTML = `Round # 1`;
+
+      model.clicks = 0;
+      model.turns = 0;
+      model.roundNum = 1;
+      controller.player = 0;
+      controller.changeButton(resetBtn, rollBtn);
    }
 };
 
