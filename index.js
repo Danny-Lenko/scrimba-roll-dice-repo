@@ -50,25 +50,28 @@ let view = {
 let model = {
    players: [
       {score: 0, dice: 0},
+      {score: 0, dice: 0},
+      {score: 0, dice: 0},
+      {score: 0, dice: 0},
       {score: 0, dice: 0}
    ],
-   clicks: 0,
-   turns: 0,
-   roundNum: 1,
+   // clicks: 0,
+   // turns: 0,
+   // roundNum: 1,
 
-   manageClicks: function() {
-      let hitScore = this.checkScore();
-      this.clicks++;
-      this.turns++;
-      if (this.clicks === (this.players.length - 1) && hitScore) {
-         this.manageVictory();
-      }
-      if (this.turns === (this.players.length - 1)) {
-         this.roundNum++;
-         this.turns = -1;
-         this.clicks = 0;
-      }
-   },
+   // manageClicks: function() {
+   //    let hitScore = this.checkScore();
+   //    this.clicks++;
+   //    this.turns++;
+   //    if (this.clicks === (this.players.length - 1) && hitScore) {
+   //       this.manageVictory();
+   //    }
+   //    if (this.turns === (this.players.length - 1)) {
+   //       this.roundNum++;
+   //       this.turns = -1;
+   //       this.clicks = 0;
+   //    }
+   // },
 
    getRandomNum: function() {
       return Math.floor(Math.random() * 6 + 1);
@@ -119,13 +122,33 @@ let playerTurn = model.countPlayerTurn();
 
 let controller = {
    player: 0,
+   clicks: 0,
+   roundNum: 1,
+
+   countClicks: function() {
+      this.clicks++;
+      this.manageClicks();
+      console.log(this.clicks);
+   },
+
+   manageClicks: function() {
+      let hitScore = model.checkScore();
+      if (this.clicks === model.players.length && hitScore) {
+         model.manageVictory();
+      }
+      if (this.clicks === model.players.length) {
+         this.roundNum++;
+         this.clicks = 0;
+      }
+   },
 
    rollDice: function() {
       model.sumPlayerScore(controller.player);
       view.displayResult(controller.player);
       view.displayScore(controller.player);
       controller.changePlayer();
-      model.manageClicks();
+      controller.countClicks();
+      // model.manageClicks();
    },
 
    changePlayer: function() {
