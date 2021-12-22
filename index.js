@@ -43,6 +43,15 @@ let view = {
 
    displayVictoryMessage: function(winner) {
       document.querySelector('#message').innerHTML = `Congrats! Player ${winner + 1} won!`;
+   },
+
+   renderDrawGround: function(winners) {
+      const drawPlayers = document.querySelector('#drawPlayers');
+      for (let i = 0; i < winners.length; i++) {
+         let playerNum = winners[i] + 1;
+         // console.log(playerNum)
+         drawPlayers.innerHTML = ``
+      }
    }
 };
 
@@ -242,5 +251,10 @@ function checkDraw(scores, best) {
    return indices
 }
 function manageDraw(winners) {
+
    console.log(`Winners are ${winners}`);
+   view.renderDrawGround(winners);
+   // for (let i = 0; i < winners.length; i++) {
+
+   // }
 }

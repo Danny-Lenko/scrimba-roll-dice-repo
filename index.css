@@ -33,13 +33,14 @@ h2 {
     padding-top: 30px;
 }
 
-.players {
-    /* width: 100%; */
+.players,
+.draw__players {
     display: flex;
     justify-content: space-around;
 }
 
-.dice {
+.dice,
+.draw__dice {
     border-radius: 10px;
     width: 100px;
     height: 100px;
@@ -112,4 +113,28 @@ button:focus {
 .overlay__btn {
     margin: 50px 25px;
     background: var(--color-5);
+}
+
+/* ======
+    draw overlay styling 
+====== */
+
+.draw {
+    height: 120%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(23, 32, 42, 0.7);
+    display: flex;
+    justify-content: center;
+    display: none;
+}
+
+.draw__content {
+    margin-top: 50px;
+    width: 70%;
+    height: 70%;
+    background: var(--color-2);
+    text-align: center;
 }
