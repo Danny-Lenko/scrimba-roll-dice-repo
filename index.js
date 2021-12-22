@@ -46,11 +46,24 @@ let view = {
    },
 
    renderDrawGround: function(winners) {
+      const drawEl = document.querySelector('.draw');
       const drawPlayers = document.querySelector('#drawPlayers');
+
+      let content = '';
+
+      drawEl.style.display="flex";
       for (let i = 0; i < winners.length; i++) {
          let playerNum = winners[i] + 1;
-         // console.log(playerNum)
-         drawPlayers.innerHTML = ``
+         content = ` 
+         <div id="player" class="playerEl">
+               <h2>Player 
+                  <span>${playerNum}</span>
+               </h2>
+            <div id="playerDice" class="dice" role="active">-</div>
+         </div>
+      `;
+         console.log(playerNum);
+         drawPlayers.innerHTML += content;
       }
    }
 };
@@ -258,3 +271,5 @@ function manageDraw(winners) {
 
    // }
 }
+
+manageDraw([0, 1, 4]);
