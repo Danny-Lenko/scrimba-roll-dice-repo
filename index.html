@@ -1,6 +1,7 @@
 <html>
     <head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
         <link rel="stylesheet" href="index.css">
+        <title>Roll Dice Game</title>
     </head>
     <body>
         <div class="overlay">
@@ -12,6 +13,16 @@
                     <button id="fourPlayersBtn" class="overlay__btn">4 Players</button>
                     <button id="fivePlayersBtn" class="overlay__btn">5 Players</button>
                 </div>
+            </div>
+        </div>
+
+        <div class="draw">
+            <div class="draw__content">
+                <h2 class="draw__h2">DRAW!</h2>
+                <h2 id="drawMessage">Each Player has only one try</h2>
+                <div class="draw__players" id="drawPlayers"></div>
+                <button class="drawBtn" id="drawRoll">Roll Dice 🎲</button>
+                <button class="drawBtn" id="drawClose">Close ❎</button>
             </div>
         </div>
 

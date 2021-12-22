@@ -4,6 +4,8 @@ window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
    document.querySelector('#resetBtn').addEventListener('click', controller.resetGame);
 
+   document.querySelector('#drawRoll').addEventListener('click', controller.drawRollDice);
+
    document.querySelector('#twoPlayersBtn').addEventListener('click', model.start2Players);
    document.querySelector('#threePlayersBtn').addEventListener('click', model.start3Players);
    document.querySelector('#fourPlayersBtn').addEventListener('click', model.start4Players);
@@ -43,6 +45,39 @@ let view = {
 
    displayVictoryMessage: function(winner) {
       document.querySelector('#message').innerHTML = `Congrats! Player ${winner + 1} won!`;
+   },
+
+   renderDrawGround: function(winners) {
+      const drawEl = document.querySelector('.draw');
+      const drawPlayers = document.querySelector('#drawPlayers');
+      let content = '';
+
+      drawEl.style.display="flex";
+      for (let i = 0; i < winners.length; i++) {
+         let playerNum = winners[i] + 1;
+         content = ` 
+            <div id="player" class="playerEl">
+                  <h2>Player 
+                     <span>${playerNum}</span>
+                  </h2>
+               <div id="playerDice" class="draw__dice" role="active">-</div>
+            </div>
+         `;
+         drawPlayers.innerHTML += content;
+      }
+   },
+   displayDrawDices: function() {
+      const drawDiceList = document.getElementsByClassName('draw__dice');
+      for (let i = 0; i < drawDiceList.length; i++) {
+         if (controller.winnersScores[i]) {
+            drawDiceList[i].innerHTML = controller.winnersScores[i];
+         }
+      }
+      return drawDiceList.length;
+   },
+   displayDrawWinner: function(winner) {
+      const drawMessage = document.querySelector('#drawMessage');
+      drawMessage.innerHTML = `Winner is Player ${winner}`;
    }
 };
 
@@ -140,6 +175,7 @@ let controller = {
    player: 0,
    clicks: 0,
    roundNum: 1,
+   winnersScores: [],
 
    countClicks: function() {
       this.clicks++;
@@ -197,7 +233,23 @@ let controller = {
       controller.roundNum = 1;
       controller.player = 0;
       controller.changeButton(resetBtn, rollBtn);
-   }
+   },
+
+   drawRollDice: ()=> {
+      const drawRoll = document.querySelector('#drawRoll');
+      const drawClose = document.querySelector('#drawClose');
+      let dice = model.getRandomNum();
+      controller.winnersScores.push(dice);
+      let winnersNum = view.displayDrawDices();
+      if (winnersNum === controller.winnersScores.length) {
+         controller.changeButton(drawRoll, drawClose);
+         let winnerNum = defineWinnerName(
+            controller.winnersScores, 
+            checkWinner(controller.winnersScores)
+         );
+         view.displayDrawWinner(winnerNum);
+      }
+   }   
 };
 
 // auxiliary functions
@@ -219,11 +271,28 @@ function checkWinner(scores) {
    return bestScore;
 }
 function defineWinnerName(scores, best) {
-   let winnerNumber = 0
-   for (let i = 0; i < scores.length; i++) {
-      if (best === scores[i]) {
-         winnerNumber = i;
+   let winnerNumber = 0;
+   let winners = checkDraw(scores, best);
+   if (winners.length < 2) {
+      for (let i = 0; i < scores.length; i++) {
+         if (best === scores[i]) {
+            winnerNumber = i;
+         }
       }
+      view.displayVictoryMessage(winnerNumber);
+      return winnerNumber;
+   } else {
+      view.renderDrawGround(winners);
    }
-   view.displayVictoryMessage(winnerNumber);
 }
+function checkDraw(scores, best) {
+   let indices = [];
+   let idx = scores.indexOf(best);
+   while (idx !== -1) {
+      indices.push(idx);
+      idx = scores.indexOf(best, idx + 1);
+   }
+   return indices
+}
+
+view.renderDrawGround([0, 1, 4]);
