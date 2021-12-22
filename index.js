@@ -4,6 +4,8 @@ window.onload = function() {
    document.querySelector('#rollBtn').addEventListener('click', controller.rollDice);
    document.querySelector('#resetBtn').addEventListener('click', controller.resetGame);
 
+   document.querySelector('#drawRoll').addEventListener('click', controller.drawRollDice);
+
    document.querySelector('#twoPlayersBtn').addEventListener('click', model.start2Players);
    document.querySelector('#threePlayersBtn').addEventListener('click', model.start3Players);
    document.querySelector('#fourPlayersBtn').addEventListener('click', model.start4Players);
@@ -48,23 +50,30 @@ let view = {
    renderDrawGround: function(winners) {
       const drawEl = document.querySelector('.draw');
       const drawPlayers = document.querySelector('#drawPlayers');
-
       let content = '';
 
       drawEl.style.display="flex";
       for (let i = 0; i < winners.length; i++) {
          let playerNum = winners[i] + 1;
          content = ` 
-         <div id="player" class="playerEl">
-               <h2>Player 
-                  <span>${playerNum}</span>
-               </h2>
-            <div id="playerDice" class="dice" role="active">-</div>
-         </div>
-      `;
-         console.log(playerNum);
+            <div id="player" class="playerEl">
+                  <h2>Player 
+                     <span>${playerNum}</span>
+                  </h2>
+               <div id="playerDice" class="draw__dice" role="active">-</div>
+            </div>
+         `;
          drawPlayers.innerHTML += content;
       }
+   },
+   displayDrawDices: function() {
+      const drawDiceList = document.getElementsByClassName('draw__dice');
+      for (let i = 0; i < drawDiceList.length; i++) {
+         if (controller.winnersScores[i]) {
+            drawDiceList[i].innerHTML = controller.winnersScores[i];
+         }
+      }
+      return drawDiceList.length;
    }
 };
 
@@ -162,6 +171,7 @@ let controller = {
    player: 0,
    clicks: 0,
    roundNum: 1,
+   winnersScores: [],
 
    countClicks: function() {
       this.clicks++;
@@ -219,7 +229,14 @@ let controller = {
       controller.roundNum = 1;
       controller.player = 0;
       controller.changeButton(resetBtn, rollBtn);
-   }
+   },
+
+   drawRollDice: ()=> {
+      let dice = model.getRandomNum();
+      controller.winnersScores.push(dice);
+      let winnersNum = view.displayDrawDices();
+      console.log(winnersNum);
+   }   
 };
 
 // auxiliary functions
@@ -251,7 +268,7 @@ function defineWinnerName(scores, best) {
       }
       view.displayVictoryMessage(winnerNumber);   
    } else {
-      manageDraw(winners)
+      view.renderDrawGround(winners);
    }
 }
 function checkDraw(scores, best) {
@@ -263,13 +280,5 @@ function checkDraw(scores, best) {
    }
    return indices
 }
-function manageDraw(winners) {
 
-   console.log(`Winners are ${winners}`);
-   view.renderDrawGround(winners);
-   // for (let i = 0; i < winners.length; i++) {
-
-   // }
-}
-
-manageDraw([0, 1, 4]);
+view.renderDrawGround([0, 1, 4]);

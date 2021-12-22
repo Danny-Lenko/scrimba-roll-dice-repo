@@ -63,11 +63,13 @@ button {
     cursor: pointer;
 }
 
-#rollBtn {
+#rollBtn,
+#drawRoll {
     background-color: var(--color-5);
 }
 
-#resetBtn {
+#resetBtn,
+#drawClose {
     background-color: var(--color-4);
 }
 
@@ -75,7 +77,8 @@ button:focus {
     outline: none;
 }
 
-#resetBtn {
+#resetBtn,
+#drawClose {
     display: none;
 }
 
