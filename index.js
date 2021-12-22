@@ -219,11 +219,28 @@ function checkWinner(scores) {
    return bestScore;
 }
 function defineWinnerName(scores, best) {
-   let winnerNumber = 0
-   for (let i = 0; i < scores.length; i++) {
-      if (best === scores[i]) {
-         winnerNumber = i;
+   let winnerNumber = 0;
+   let winners = checkDraw(scores, best);
+   if (winners.length < 2) {
+      for (let i = 0; i < scores.length; i++) {
+         if (best === scores[i]) {
+            winnerNumber = i;
+         }
       }
+      view.displayVictoryMessage(winnerNumber);   
+   } else {
+      manageDraw(winners)
    }
-   view.displayVictoryMessage(winnerNumber);
+}
+function checkDraw(scores, best) {
+   let indices = [];
+   let idx = scores.indexOf(best);
+   while (idx !== -1) {
+      indices.push(idx);
+      idx = scores.indexOf(best, idx + 1);
+   }
+   return indices
+}
+function manageDraw(winners) {
+   console.log(`Winners are ${winners}`);
 }
