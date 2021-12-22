@@ -74,6 +74,10 @@ let view = {
          }
       }
       return drawDiceList.length;
+   },
+   displayDrawWinner: function(winner) {
+      const drawMessage = document.querySelector('#drawMessage');
+      drawMessage.innerHTML = `Winner is Player ${winner}`;
    }
 };
 
@@ -232,10 +236,19 @@ let controller = {
    },
 
    drawRollDice: ()=> {
+      const drawRoll = document.querySelector('#drawRoll');
+      const drawClose = document.querySelector('#drawClose');
       let dice = model.getRandomNum();
       controller.winnersScores.push(dice);
       let winnersNum = view.displayDrawDices();
-      console.log(winnersNum);
+      if (winnersNum === controller.winnersScores.length) {
+         controller.changeButton(drawRoll, drawClose);
+         let winnerNum = defineWinnerName(
+            controller.winnersScores, 
+            checkWinner(controller.winnersScores)
+         );
+         view.displayDrawWinner(winnerNum);
+      }
    }   
 };
 
@@ -266,7 +279,8 @@ function defineWinnerName(scores, best) {
             winnerNumber = i;
          }
       }
-      view.displayVictoryMessage(winnerNumber);   
+      view.displayVictoryMessage(winnerNumber);
+      return winnerNumber;
    } else {
       view.renderDrawGround(winners);
    }
