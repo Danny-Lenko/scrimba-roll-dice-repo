@@ -47,10 +47,13 @@ let view = {
       document.querySelector('#message').innerHTML = `Congrats! Player ${winner + 1} won!`;
    },
 
-   renderDrawGround: function(winners) {
+   renderDrawGround: function(winners, message) {
       const drawEl = document.querySelector('.draw');
       const drawPlayers = document.querySelector('#drawPlayers');
+      const messageEl = document.querySelector('#drawMessage');
       let content = '';
+
+      messageEl.innerHTML = message;
 
       drawEl.style.display="flex";
       for (let i = 0; i < winners.length; i++) {
@@ -75,10 +78,19 @@ let view = {
       }
       return drawDiceList.length;
    },
-   displayDrawWinner: function(winner) {
+
+   displayDrawWinner: function(winners, drawWinnerNum) {
       const drawMessage = document.querySelector('#drawMessage');
-      drawMessage.innerHTML = `Winner is Player ${winner}`;
+      drawMessage.innerHTML = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
+   },
+
+   displayDrawNoWinner: function(winners) {
+      const drawMessage = document.querySelector('#drawMessage');
+      for (let i = 0; i < winners.length; i++) {
+         drawMessage.innerHTML = `No winners! Players ${winners} have same scores`;
+      }
    }
+
 };
 
 //
@@ -86,6 +98,7 @@ let view = {
 //
 
 let model = {
+
    players: [
       {score: 0, dice: 0},
       {score: 0, dice: 0},
@@ -172,10 +185,12 @@ let playerTurn = model.countPlayerTurn();
 // 
 
 let controller = {
+
    player: 0,
    clicks: 0,
    roundNum: 1,
    winnersScores: [],
+   winners: [],
 
    countClicks: function() {
       this.clicks++;
@@ -239,17 +254,31 @@ let controller = {
       const drawRoll = document.querySelector('#drawRoll');
       const drawClose = document.querySelector('#drawClose');
       let dice = model.getRandomNum();
+      let message;
+      let drawWinnerNum;
+      let winners = controller.winners;
+      console.log(winners)
+
       controller.winnersScores.push(dice);
-      let winnersNum = view.displayDrawDices();
-      if (winnersNum === controller.winnersScores.length) {
+      let winnersQuantity = view.displayDrawDices();
+
+      if (winnersQuantity === controller.winnersScores.length) {
          controller.changeButton(drawRoll, drawClose);
-         let winnerNum = defineWinnerName(
+         drawWinnerNum = defineWinnerName(
             controller.winnersScores, 
             checkWinner(controller.winnersScores)
          );
-         view.displayDrawWinner(winnerNum);
+         if (drawWinnerNum.length > 1) {
+            // message = 
+            // view.displayDrawNoWinner(winnerNum);
+            alert(`drawAgain`);
+         } else {
+            // message = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
+            view.displayDrawWinner(winners, drawWinnerNum);
+         }
       }
-   }   
+   }
+
 };
 
 // auxiliary functions
@@ -282,7 +311,8 @@ function defineWinnerName(scores, best) {
       view.displayVictoryMessage(winnerNumber);
       return winnerNumber;
    } else {
-      view.renderDrawGround(winners);
+      view.renderDrawGround(winners, 'Each Player has only one try');
+      return winners;
    }
 }
 function checkDraw(scores, best) {
@@ -292,7 +322,8 @@ function checkDraw(scores, best) {
       indices.push(idx);
       idx = scores.indexOf(best, idx + 1);
    }
+   controller.winners = indices;
    return indices
 }
 
-view.renderDrawGround([0, 1, 4]);
+// view.renderDrawGround([0, 1, 4], 'Each Player has only one try');
