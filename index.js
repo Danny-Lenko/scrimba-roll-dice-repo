@@ -5,6 +5,9 @@ window.onload = function() {
    document.querySelector('#resetBtn').addEventListener('click', controller.resetGame);
 
    document.querySelector('#drawRoll').addEventListener('click', controller.drawRollDice);
+   document.querySelector('#drawClose').addEventListener('click', function() {
+      document.querySelector('.draw').style.display="none";
+   })
 
    document.querySelector('#twoPlayersBtn').addEventListener('click', model.start2Players);
    document.querySelector('#threePlayersBtn').addEventListener('click', model.start3Players);
@@ -55,6 +58,7 @@ let view = {
       drawEl.style.display="flex";
       renderContent(winners);
    },
+
    displayDrawDices: function() {
       const drawDiceList = document.getElementsByClassName('draw__dice');
       for (let i = 0; i < drawDiceList.length; i++) {
@@ -68,6 +72,7 @@ let view = {
    displayDrawWinner: function(winners, drawWinnerNum) {
       const drawMessage = document.querySelector('#drawMessage');
       drawMessage.innerHTML = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
+      document.querySelector('#message').innerHTML = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
    }
 
 };
@@ -214,6 +219,8 @@ let controller = {
       const diceList = document.getElementsByClassName('dice');
       const rollBtn = document.querySelector('#rollBtn');
       const resetBtn = document.querySelector('#resetBtn');
+      // const drawEl = document.querySelector('.draw');
+      const drawPlayers = document.querySelector('#drawPlayers');
 
       for (let i = 0; i < model.players.length; i++) {
          model.players[i].score = 0;
@@ -227,6 +234,14 @@ let controller = {
       controller.roundNum = 1;
       controller.player = 0;
       controller.changeButton(resetBtn, rollBtn);
+      controller.winnersScores = [];
+      controller.winners = [];
+      drawPlayers.innerHTML = '';
+      renderContent(controller.winners);
+      controller.changeButton(
+         document.querySelector('#drawClose'),
+         document.querySelector('#drawRoll')
+      );
    },
 
    drawRollDice: ()=> {
@@ -323,11 +338,15 @@ function renderContent(winners) {
 }
 function drawNoWinnerMessage(winners) {
    let content = '';
+   let mainContent = '';
    let winnersNames = [];
    const drawMessage = document.querySelector('#drawMessage');
    for (let i = 0; i < winners.length; i++) {
       winnersNames.push(winners[i] + 1);
-      content = `No Winner! Players # ${winnersNames} have same scores`
+      content = `No Winner! Players # ${winnersNames} have same scores`;
       drawMessage.innerHTML = content;
+      mainContent = `No Winner! Players # ${winnersNames} have same scores`;
+      document.querySelector('#message').innerHTML = mainContent;
    }
 }
+
