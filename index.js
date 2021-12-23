@@ -49,25 +49,10 @@ let view = {
 
    renderDrawGround: function(winners, message) {
       const drawEl = document.querySelector('.draw');
-      // const drawPlayers = document.querySelector('#drawPlayers');
       const messageEl = document.querySelector('#drawMessage');
-      // let content = '';
 
       messageEl.innerHTML = message;
-
       drawEl.style.display="flex";
-      // for (let i = 0; i < winners.length; i++) {
-      //    let playerNum = winners[i] + 1;
-      //    content = ` 
-      //       <div id="player" class="playerEl">
-      //             <h2>Player 
-      //                <span>${playerNum}</span>
-      //             </h2>
-      //          <div id="playerDice" class="draw__dice" role="active">-</div>
-      //       </div>
-      //    `;
-      //    drawPlayers.innerHTML += content;
-      // }
       renderContent(winners);
    },
    displayDrawDices: function() {
@@ -83,14 +68,7 @@ let view = {
    displayDrawWinner: function(winners, drawWinnerNum) {
       const drawMessage = document.querySelector('#drawMessage');
       drawMessage.innerHTML = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
-   },
-
-   // displayDrawNoWinner: function(winners) {
-   //    const drawMessage = document.querySelector('#drawMessage');
-   //    for (let i = 0; i < winners.length; i++) {
-   //       drawMessage.innerHTML = `No winners! Players ${winners} have same scores`;
-   //    }
-   // }
+   }
 
 };
 
@@ -344,8 +322,12 @@ function renderContent(winners) {
    }
 }
 function drawNoWinnerMessage(winners) {
+   let content = '';
+   let winnersNames = [];
    const drawMessage = document.querySelector('#drawMessage');
    for (let i = 0; i < winners.length; i++) {
-      drawMessage.innerHTML = `No Winner! Players # ${winners[i] + 1} have same scores`;
+      winnersNames.push(winners[i] + 1);
+      content = `No Winner! Players # ${winnersNames} have same scores`
+      drawMessage.innerHTML = content;
    }
 }
