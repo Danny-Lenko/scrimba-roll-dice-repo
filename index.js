@@ -49,25 +49,26 @@ let view = {
 
    renderDrawGround: function(winners, message) {
       const drawEl = document.querySelector('.draw');
-      const drawPlayers = document.querySelector('#drawPlayers');
+      // const drawPlayers = document.querySelector('#drawPlayers');
       const messageEl = document.querySelector('#drawMessage');
-      let content = '';
+      // let content = '';
 
       messageEl.innerHTML = message;
 
       drawEl.style.display="flex";
-      for (let i = 0; i < winners.length; i++) {
-         let playerNum = winners[i] + 1;
-         content = ` 
-            <div id="player" class="playerEl">
-                  <h2>Player 
-                     <span>${playerNum}</span>
-                  </h2>
-               <div id="playerDice" class="draw__dice" role="active">-</div>
-            </div>
-         `;
-         drawPlayers.innerHTML += content;
-      }
+      // for (let i = 0; i < winners.length; i++) {
+      //    let playerNum = winners[i] + 1;
+      //    content = ` 
+      //       <div id="player" class="playerEl">
+      //             <h2>Player 
+      //                <span>${playerNum}</span>
+      //             </h2>
+      //          <div id="playerDice" class="draw__dice" role="active">-</div>
+      //       </div>
+      //    `;
+      //    drawPlayers.innerHTML += content;
+      // }
+      renderContent(winners);
    },
    displayDrawDices: function() {
       const drawDiceList = document.getElementsByClassName('draw__dice');
@@ -84,13 +85,12 @@ let view = {
       drawMessage.innerHTML = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
    },
 
-   displayDrawNoWinner: function(winners) {
-      const drawMessage = document.querySelector('#drawMessage');
-
-      for (let i = 0; i < winners.length; i++) {
-         drawMessage.innerHTML = `No winners! Players ${winners} have same scores`;
-      }
-   }
+   // displayDrawNoWinner: function(winners) {
+   //    const drawMessage = document.querySelector('#drawMessage');
+   //    for (let i = 0; i < winners.length; i++) {
+   //       drawMessage.innerHTML = `No winners! Players ${winners} have same scores`;
+   //    }
+   // }
 
 };
 
@@ -275,6 +275,9 @@ let controller = {
       if (drawWinnerNum.length > 1) {
          drawPlayers.innerHTML = '';
          renderContent([0, 1, 2]);
+         view.displayDrawDices();
+         drawNoWinnerMessage();         
+         alert('drawAgain');
       }
    }
 
@@ -340,6 +343,10 @@ function renderContent(winners) {
       `;
       drawPlayers.innerHTML += content;
    }
+}
+function drawNoWinnerMessage() {
+   const drawMessage = document.querySelector('#drawMessage');
+   drawMessage.innerHTML = 'No Winner! Players have same scores';
 }
 
 view.renderDrawGround([0, 1, 4], 'Each Player has only one try');
