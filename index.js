@@ -47,24 +47,13 @@ let view = {
       document.querySelector('#message').innerHTML = `Congrats! Player ${winner + 1} won!`;
    },
 
-   renderDrawGround: function(winners) {
+   renderDrawGround: function(winners, message) {
       const drawEl = document.querySelector('.draw');
-      const drawPlayers = document.querySelector('#drawPlayers');
-      let content = '';
+      const messageEl = document.querySelector('#drawMessage');
 
+      messageEl.innerHTML = message;
       drawEl.style.display="flex";
-      for (let i = 0; i < winners.length; i++) {
-         let playerNum = winners[i] + 1;
-         content = ` 
-            <div id="player" class="playerEl">
-                  <h2>Player 
-                     <span>${playerNum}</span>
-                  </h2>
-               <div id="playerDice" class="draw__dice" role="active">-</div>
-            </div>
-         `;
-         drawPlayers.innerHTML += content;
-      }
+      renderContent(winners);
    },
    displayDrawDices: function() {
       const drawDiceList = document.getElementsByClassName('draw__dice');
@@ -75,10 +64,12 @@ let view = {
       }
       return drawDiceList.length;
    },
-   displayDrawWinner: function(winner) {
+
+   displayDrawWinner: function(winners, drawWinnerNum) {
       const drawMessage = document.querySelector('#drawMessage');
-      drawMessage.innerHTML = `Winner is Player ${winner}`;
+      drawMessage.innerHTML = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
    }
+
 };
 
 //
@@ -86,6 +77,7 @@ let view = {
 //
 
 let model = {
+
    players: [
       {score: 0, dice: 0},
       {score: 0, dice: 0},
@@ -172,10 +164,12 @@ let playerTurn = model.countPlayerTurn();
 // 
 
 let controller = {
+
    player: 0,
    clicks: 0,
    roundNum: 1,
    winnersScores: [],
+   winners: [],
 
    countClicks: function() {
       this.clicks++;
@@ -238,18 +232,32 @@ let controller = {
    drawRollDice: ()=> {
       const drawRoll = document.querySelector('#drawRoll');
       const drawClose = document.querySelector('#drawClose');
+      const drawPlayers = document.querySelector('#drawPlayers');
+
       let dice = model.getRandomNum();
+      let drawWinnerNum = 0;
+      let winners = controller.winners;
+
       controller.winnersScores.push(dice);
-      let winnersNum = view.displayDrawDices();
-      if (winnersNum === controller.winnersScores.length) {
+      let winnersQuantity = view.displayDrawDices();
+
+      if (winnersQuantity === controller.winnersScores.length) {
          controller.changeButton(drawRoll, drawClose);
-         let winnerNum = defineWinnerName(
+         drawWinnerNum = defineWinnerName(
             controller.winnersScores, 
             checkWinner(controller.winnersScores)
          );
-         view.displayDrawWinner(winnerNum);
+         view.displayDrawWinner(winners, drawWinnerNum);
       }
-   }   
+
+      if (drawWinnerNum.length > 1) {
+         drawPlayers.innerHTML = '';
+         renderContent(winners);
+         view.displayDrawDices();
+         drawNoWinnerMessage(winners);         
+      }
+   }
+
 };
 
 // auxiliary functions
@@ -282,7 +290,8 @@ function defineWinnerName(scores, best) {
       view.displayVictoryMessage(winnerNumber);
       return winnerNumber;
    } else {
-      view.renderDrawGround(winners);
+      view.renderDrawGround(winners, 'Each Player has only one try');
+      return winners;
    }
 }
 function checkDraw(scores, best) {
@@ -292,7 +301,33 @@ function checkDraw(scores, best) {
       indices.push(idx);
       idx = scores.indexOf(best, idx + 1);
    }
+   controller.winners = indices;
    return indices
 }
+function renderContent(winners) {
+   const drawPlayers = document.querySelector('#drawPlayers');
+   let content = '';
 
-view.renderDrawGround([0, 1, 4]);
+   for (let i = 0; i < winners.length; i++) {
+      let playerNum = winners[i] + 1;
+      content = ` 
+         <div id="player" class="playerEl">
+               <h2>Player 
+                  <span>${playerNum}</span>
+               </h2>
+            <div id="playerDice" class="draw__dice" role="active">-</div>
+         </div>
+      `;
+      drawPlayers.innerHTML += content;
+   }
+}
+function drawNoWinnerMessage(winners) {
+   let content = '';
+   let winnersNames = [];
+   const drawMessage = document.querySelector('#drawMessage');
+   for (let i = 0; i < winners.length; i++) {
+      winnersNames.push(winners[i] + 1);
+      content = `No Winner! Players # ${winnersNames} have same scores`
+      drawMessage.innerHTML = content;
+   }
+}
