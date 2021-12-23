@@ -86,6 +86,7 @@ let view = {
 
    displayDrawNoWinner: function(winners) {
       const drawMessage = document.querySelector('#drawMessage');
+
       for (let i = 0; i < winners.length; i++) {
          drawMessage.innerHTML = `No winners! Players ${winners} have same scores`;
       }
@@ -253,11 +254,11 @@ let controller = {
    drawRollDice: ()=> {
       const drawRoll = document.querySelector('#drawRoll');
       const drawClose = document.querySelector('#drawClose');
+      const drawPlayers = document.querySelector('#drawPlayers');
+
       let dice = model.getRandomNum();
-      let message;
-      let drawWinnerNum;
+      let drawWinnerNum = 0;
       let winners = controller.winners;
-      console.log(winners)
 
       controller.winnersScores.push(dice);
       let winnersQuantity = view.displayDrawDices();
@@ -268,14 +269,12 @@ let controller = {
             controller.winnersScores, 
             checkWinner(controller.winnersScores)
          );
-         if (drawWinnerNum.length > 1) {
-            // message = 
-            // view.displayDrawNoWinner(winnerNum);
-            alert(`drawAgain`);
-         } else {
-            // message = `Winner is Player # ${winners[drawWinnerNum] + 1}`;
-            view.displayDrawWinner(winners, drawWinnerNum);
-         }
+         view.displayDrawWinner(winners, drawWinnerNum);
+      }
+
+      if (drawWinnerNum.length > 1) {
+         drawPlayers.innerHTML = '';
+         renderContent([0, 1, 2]);
       }
    }
 
@@ -325,5 +324,22 @@ function checkDraw(scores, best) {
    controller.winners = indices;
    return indices
 }
+function renderContent(winners) {
+   const drawPlayers = document.querySelector('#drawPlayers');
+   let content = '';
 
-// view.renderDrawGround([0, 1, 4], 'Each Player has only one try');
+   for (let i = 0; i < winners.length; i++) {
+      let playerNum = winners[i] + 1;
+      content = ` 
+         <div id="player" class="playerEl">
+               <h2>Player 
+                  <span>${playerNum}</span>
+               </h2>
+            <div id="playerDice" class="draw__dice" role="active">-</div>
+         </div>
+      `;
+      drawPlayers.innerHTML += content;
+   }
+}
+
+view.renderDrawGround([0, 1, 4], 'Each Player has only one try');
