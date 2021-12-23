@@ -274,10 +274,9 @@ let controller = {
 
       if (drawWinnerNum.length > 1) {
          drawPlayers.innerHTML = '';
-         renderContent([0, 1, 2]);
+         renderContent(winners);
          view.displayDrawDices();
-         drawNoWinnerMessage();         
-         alert('drawAgain');
+         drawNoWinnerMessage(winners);         
       }
    }
 
@@ -344,9 +343,9 @@ function renderContent(winners) {
       drawPlayers.innerHTML += content;
    }
 }
-function drawNoWinnerMessage() {
+function drawNoWinnerMessage(winners) {
    const drawMessage = document.querySelector('#drawMessage');
-   drawMessage.innerHTML = 'No Winner! Players have same scores';
+   for (let i = 0; i < winners.length; i++) {
+      drawMessage.innerHTML = `No Winner! Players # ${winners[i] + 1} have same scores`;
+   }
 }
-
-view.renderDrawGround([0, 1, 4], 'Each Player has only one try');
